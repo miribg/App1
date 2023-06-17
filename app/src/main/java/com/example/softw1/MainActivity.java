@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         //base de datos
         miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
         bd= GestorDB.getWritableDatabase();
+        bd.close();
+        this.deleteDatabase("UlertuzBD");
 
         //opciones de idiomas
         spinner=(Spinner)findViewById(R.id.spinnerId1);

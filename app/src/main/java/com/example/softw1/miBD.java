@@ -45,9 +45,11 @@ public class miBD extends SQLiteOpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // sqLiteDatabase.execSQL("DROP TABLE IF EXISTS Usuario");
-        // onCreate(db);
+         db.execSQL("DROP TABLE IF EXISTS Usuario");
+         onCreate(db);
     }
+
+
 
 
 }

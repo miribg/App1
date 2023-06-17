@@ -27,6 +27,8 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Registro extends AppCompatActivity  {
 
@@ -53,22 +55,17 @@ public class Registro extends AppCompatActivity  {
             public void onClick(View view) {
                 //obtener valores
                 str_uName = et1.getText().toString().trim();
-                str_name = et2.getText().toString().trim();
-                str_surname=et3.getText().toString().trim();
                 str_password=et4.getText().toString().trim();
-                str_email=et5.getText().toString().trim();
-                str_phone=et6.getText().toString().trim();
 
                 //base de datos
                 miBD GestorDB= new miBD(Registro.this, "UlertuzBD", null,1 );
                 db= GestorDB.getWritableDatabase();
 
-                if (!str_name.isEmpty() && !str_password.isEmpty()
-                    && !str_email.isEmpty() && !str_phone.isEmpty() && !str_uName.isEmpty()) {
-                        comprobarNombreUsuario();
+                if (!str_uName.isEmpty() && !str_password.isEmpty()){
+                    comprobarNombreUsuario();
                 } else {    //algún dato sin meter
                     //TODO dialogo mejor
-                    Toast.makeText(Registro.this, R.string.vacio, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Registro.this, R.string.vacioReg, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -84,15 +81,31 @@ public class Registro extends AppCompatActivity  {
         cu.close();
 
         if (cant == 0) {
-            registrar(); //si no esta, se registra el usuario
+            str_email=et5.getText().toString().trim();
+            if (isEmailValid(str_email)){
+                registrar(); //si no esta, se registra el usuario
+            }else{
+                Toast.makeText(Registro.this,R.string.formatoCorreo, Toast.LENGTH_SHORT).show();
+            }
         } else {
             errorAlert();
             et1.setText("", TextView.BufferType.EDITABLE);  //vaciar el nombre de usuario, para que puedan volver a meterlo
         }
     }
-
+    private boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
     private void registrar() {
         //se cogen todos los parametros y se hace un insert en la db
+        //obtener valores
+        str_name = et2.getText().toString().trim();
+        str_surname=et3.getText().toString().trim();
+
+        str_phone=et6.getText().toString().trim();
+
         //$query="INSERT INTO Usuario ('user_name','name','password', 'email','phone')
         // VALUES ('$user_name','$name','$surname','$password','$email','$phone')";
         ContentValues usuarioNuevo = new ContentValues();

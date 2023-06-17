@@ -25,6 +25,8 @@
     <string name="btn_volver"> Volver </string>
     <string name="escogerC">Escoge un color</string>
     <string name="vacio">Algún parametro vacio</string>
+    <string name="vacioReg">Rellena nombre de usuario y contraseña</string>
+    <string name="formatoCorreo">Formato de correo incorrecto</string>
     <string name="errorSign">Nombre de usuario o contraseña incorrecta</string>
     <string name="errorSignEn">Incorrecto</string>
     <string name="errorRepe">Ya existe un usuario con ese nombre. Inserta otro.</string>
