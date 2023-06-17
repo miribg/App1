@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -58,14 +60,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    Context context;
-    ArrayList name,date, time, place, id, color;
-
-    String notas;
-
-    boolean delete;
-
-
+    private Context context;
+    private ArrayList name,date, time, place, id, color;
+    private String notas;
+    private boolean delete;
+    private SQLiteDatabase db;
     public MyAdapter(Context context, ArrayList name, ArrayList date, ArrayList time, ArrayList place, ArrayList id,
                      ArrayList color,  boolean delete) {
         this.context = context;
@@ -104,8 +103,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public int getItemCount() {
         return name.size();
     }
-
-
 
     protected void borrarPos(int pos, View vi){
         // a la hora de clickar un cardview, borrarlo si ha seleccionado en el menuPrincipal esa opción
@@ -203,40 +200,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     private void obtenerArchivo(View vi, int pos, boolean enseñar){
         //obtener las notas desdes la base de datos
-        String url = "http://192.168.1.135/developeru/eventoJS.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (response != null && response.length()>0) {
-                    if (!response.equalsIgnoreCase("incorrecto")) {
-                       notas=response;
-                    }
-                }else{
-                    notas="----------------"; //si esta vacio
-                }
-                if (enseñar){       //si no se manda correo, true
-                    alertNotas();
-                }else{
-                    crearArchText(notas,pos);
-                }
-
+        //$query="SELECT notas FROM Evento WHERE id=$id";
+        String[] campos = new String[]{"notas"};
+        String[] argumentos = new String[]{id.get(pos).toString()};
+        Cursor cu = db.query("Evento", campos, "id = ?", argumentos, null, null, null);
+        while (cu.moveToNext()) {
+            String notas= cu.getString(0);
+            if (notas.isEmpty()){
+                notas="----------------"; //si esta vacio
             }
-        }, null) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //pasar los parametros que necesita para la consulta
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("id", (String) id.get(pos));
-                return parametros;
+            if (enseñar){       //si no se manda correo, true
+                alertNotas();
+            }else{
+                crearArchText(notas,pos);
             }
-        };
-        RequestQueue requestQueue= Volley.newRequestQueue(vi.getContext());
-        requestQueue.add(stringRequest);
+        }
+        cu.close();
     }
 
     private void deleteDb (View vi, int pos){
         //borrar de la base de datos el evento seleccionado
+
         String url = "http://192.168.1.135/developeru/eliminar_evento.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -266,12 +250,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
 
-        CardView card;
+        private CardView card;
         //TODO linearlayout
-        TextView name, place, date, time;
+        private TextView name, place, date, time;
 
+        private MyAdapter adapter;
 
-        MyAdapter adapter;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             name=itemView.findViewById(R.id.recTit);

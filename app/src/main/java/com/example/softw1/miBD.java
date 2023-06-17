@@ -28,7 +28,7 @@ public class miBD extends SQLiteOpenHelper {
         );
 
         db.execSQL(
-                "CREATE TABLE IF NOT EXISTS Usuario (" +
+                "CREATE TABLE IF NOT EXISTS Evento (" +
                         " 'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                         " 'titulo' TEXT," +
                         " 'fechaI' DATE NOT NULL," +

@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -108,44 +109,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void validarUsuario()  {
         // comprueba que exista un usuario con ese nombre y contraseña
-        String url = "http://192.168.1.135/developeru/validar_usuario.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (response != null && response.length()>0){
-                    if (response.equalsIgnoreCase("ingreso correctamente")) {
-                        Intent intent = new Intent(getApplicationContext(), MenuPrincipal.class);
-                        intent.putExtra("name",str_name);
-                        startActivity(intent);
-                    }else {
-                        errorAlert();
-                        et1.setText("");
-                        et2.setText("");
-                    }
-                }/*else{
-                    Toast.makeText(MainActivity.this, "No parametrs", Toast.LENGTH_LONG).show();
-                }*/
-            }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                //TODO: CAMBIAR
-                    Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-                    Log.d("error",error.toString());
-                }
-            }
-        ) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("user_name", str_name);
-                parametros.put("password", str_password);
-                return parametros;
-            }
-        };
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        //$query="SELECT COUNT(*) FROM Usuario WHERE user_name='$user_name' AND password='$password'";
+        String[] campos = new String[]{"COUNT(*)"};
+        String[] argumentos = new String[]{str_name,str_password};
+        Cursor cu = bd.query("Usuario", campos, "user_name = ? AND password=?", argumentos, null, null, null);
+        cu.moveToFirst();
+        int cant = cu.getInt(0);
+        cu.close();
+        bd.close();
+        if (cant > 0) {
+            Intent intent = new Intent(getApplicationContext(), MenuPrincipal.class);
+            intent.putExtra("name",str_name);
+            startActivity(intent);
+        }else{
+            errorAlert();
+            et1.setText("");
+            et2.setText("");
+        }
     }
 
     private void errorAlert(){
@@ -163,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alert= al.create();
         alert.show();
     }
+
     private void cambiarIdioma(String idioma){
         Locale nuevaloc = new Locale(idioma);
         Locale.setDefault(nuevaloc);
@@ -186,37 +167,6 @@ public class MainActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
         btn_reg.setText(getString(R.string.btn_reg));
         btn_iniciar.setText(getString(R.string.btn_iniciar));
-    }
-
-    @Override
-    protected void onStart() {
-        // reiniciar: La actividad está a punto de hacerse visible.
-        super.onStart();
-       // Toast.makeText(this, "OnStart", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onResume() {
-        // hacer visible: La actividad se ha vuelto visible (ahora se "reanuda").
-        super.onResume();
-        //Toast.makeText(this, "OnResume", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onPause() {
-         // Pausar la actividad: poner la app en 2 plano
-        super.onPause();
-        //Toast.makeText(this, "OnPause", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onStop() {
-        //Oculta la actividad: 2 plano
-        super.onStop();
-       // Toast.makeText(this, "OnStop", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onDestroy() {
-        // cerrar la app:  no se puede recuperar
-        super.onDestroy();
-        //Toast.makeText(this, "OnDestroy", Toast.LENGTH_SHORT).show();
     }
 
 }

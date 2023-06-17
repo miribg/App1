@@ -31,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Registro extends AppCompatActivity  {
-
     private EditText et1, et2, et3, et4, et5, et6;
     private Button btn;
     private String str_name, str_uName, str_surname, str_password, str_email, str_phone;
@@ -76,7 +75,7 @@ public class Registro extends AppCompatActivity  {
         String[] campos = new String[]{"COUNT(*)"};
         String[] argumentos = new String[]{str_uName};
         Cursor cu = db.query("Usuario", campos, "user_name = ?", argumentos, null, null, null);
-        cu.moveToNext();
+        cu.moveToFirst();
         int cant = cu.getInt(0);
         cu.close();
 
@@ -86,7 +85,7 @@ public class Registro extends AppCompatActivity  {
                 registrar(); //si no esta, se registra el usuario
             }else{
                 Toast.makeText(Registro.this,R.string.formatoCorreo, Toast.LENGTH_SHORT).show();
-            }
+            } //TODO telf. 9 carac o vacio
         } else {
             errorAlert();
             et1.setText("", TextView.BufferType.EDITABLE);  //vaciar el nombre de usuario, para que puedan volver a meterlo
@@ -103,8 +102,9 @@ public class Registro extends AppCompatActivity  {
         //obtener valores
         str_name = et2.getText().toString().trim();
         str_surname=et3.getText().toString().trim();
-
         str_phone=et6.getText().toString().trim();
+
+        // TODO Preferncia idioma
 
         //$query="INSERT INTO Usuario ('user_name','name','password', 'email','phone')
         // VALUES ('$user_name','$name','$surname','$password','$email','$phone')";
