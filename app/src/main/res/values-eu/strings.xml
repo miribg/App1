@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ulertuz app</string>
+    <string name="app_name">ULERTUZ APP</string>
     <string name="str_name"> Izena </string>
     <string name="str_ape"> Abizena </string>
     <string name="str_uName"> Erabiltzaile izena </string>
@@ -18,7 +18,7 @@
     <string name="btn_guardar"> Gorde </string>
     <string name="btn_acep"> Onartu </string>
     <string name="btn_canc"> Ezeztatu </string>
-    <string name="tit_reg"> Izena eman </string>
+    <string name="tit_reg"> IZENA EMAN</string>
     <string name="tit_an">Ekintza gehitu</string>
     <string name="tit_bor"> Ekintza ezabatuta</string>
     <string name="titulo">Ekintzak</string>

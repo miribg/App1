@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ulertuz app</string>
+    <string name="app_name">ULERTUZ APP</string>
     <string name="str_name">Nombre </string>
     <string name="str_ape">Apellido </string>
     <string name="str_uName">Nombre de usuario </string>
@@ -18,7 +18,7 @@
     <string name="btn_guardar"> Guardar </string>
     <string name="btn_acep"> Aceptar </string>
     <string name="btn_canc"> Cancelar </string>
-    <string name="tit_reg"> Registro </string>
+    <string name="tit_reg"> REGISTRO </string>
     <string name="tit_bor"> Evento borrado</string>
     <string name="tit_an">Añadir evento</string>
     <string name="titulo">Eventos</string>

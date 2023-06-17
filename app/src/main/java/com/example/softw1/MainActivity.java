@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,11 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText et1, et2;
     private TextView btn_reg;
     private Button btn_iniciar;
-
     private Spinner spinner;
-
     private String str_name, str_password;
-
+    private SQLiteDatabase bd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
         et2 = (EditText) findViewById(R.id.contraseñaUsuario);
         str_name = et1.getText().toString().trim();
         str_password = et2.getText().toString().trim();
+
+        //base de datos
+        miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
+        bd= GestorDB.getWritableDatabase();
 
         //opciones de idiomas
         spinner=(Spinner)findViewById(R.id.spinnerId1);
