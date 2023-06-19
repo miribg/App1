@@ -1,5 +1,7 @@
 package com.example.softw1;
 
+import static java.lang.Integer.parseInt;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -25,6 +27,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +35,8 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -78,14 +83,13 @@ import java.util.Map;
 public class MenuPrincipal extends AppCompatActivity {
 
     // OneCalendarView calV;
-    CalendarView calV;
-    FloatingActionButton fab1, fab2;
-
-    Spinner sp1, sp2, sp3;
-    Button btn;
-    String str_name, fechaI, fechaF, horI, horF, lug, tit, notas, color, colorB;
-    int seleccion;
-    EditText etf1, etf2, eth1, eth2, ett, etl, etn;
+    private CalendarView calV;
+    private FloatingActionButton fab1, fab2;
+    private Spinner sp1, sp2, sp3;
+    private Button btn;
+    private String str_name, fechaI, fechaF, horI, horF, lug, tit, notas, color, colorB;
+    private int seleccion;
+    private EditText etf1, etf2, eth1, eth2, ett, etl, etn;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -112,8 +116,7 @@ public class MenuPrincipal extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         //Escoger operación que se quiere realizar
@@ -127,7 +130,6 @@ public class MenuPrincipal extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
-
 
         obtenerColor();
         //clickar botón aceptar
@@ -170,7 +172,7 @@ public class MenuPrincipal extends AppCompatActivity {
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //se abre escoger color
+                //se abre escoger color y idioma
                 Intent intent = new Intent(getApplicationContext(), EscogerColor.class);
                 intent.putExtra("color", colorB);
                 intent.putExtra("user_name", str_name);
@@ -199,7 +201,7 @@ public class MenuPrincipal extends AppCompatActivity {
                     //se tiene el resultado de escoger Color class
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         colorB=result.getData().getStringExtra("result");
-                        btn.setBackgroundColor(Integer.parseInt(colorB));
+                        btn.setBackgroundColor(parseInt(colorB));
                     }
                 }
             });
@@ -208,31 +210,22 @@ public class MenuPrincipal extends AppCompatActivity {
 
     private void obtenerColor(){
         //se obtiene el color elegido por el usuario
-        String url = "http://192.168.1.135/developeru/color.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (response != null && response.length()>0) {
-                    if (!response.equalsIgnoreCase("incorrecto")) {
-                        colorB=response;
-                    }
-                }else{      //en el caso de no haber escogido ninguno
-                   colorB=obtenerColor(0, true);
-                }
-                btn.setBackgroundColor(Integer.parseInt(colorB));
-            }
-        }, null) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //pasar los parametros que necesita la base de datos
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("user_name", str_name);
-                return parametros;
-            }
-        };
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        //$query="SELECT color FROM Usuario WHERE user_name='$user_name'";
+
+        //base de datos
+        miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
+        SQLiteDatabase bd= GestorDB.getWritableDatabase();
+        String[] campos = new String[]{"color"};
+        String[] argumentos = new String[]{str_name};
+        Cursor cu = bd.query("Usuario", campos, "user_name = ?", argumentos, null, null, null);
+        cu.moveToFirst();
+        colorB =cu.getString(0);
+        if (colorB.isEmpty()){ //en el caso de no haber escogido ninguno
+            colorB=obtenerColor(0, true);
+        }
+        btn.setBackgroundColor(parseInt(colorB));
+        cu.close();
+        bd.close();
     }
 
     private void añadirEventoAlert() {
@@ -322,6 +315,10 @@ public class MenuPrincipal extends AppCompatActivity {
                                 incorrectoAlert(true);
                                 correcto = false;
                             }
+                        }else {
+                            if (horI.isEmpty()) {
+                                Toast.makeText(MenuPrincipal.this, R.string.vacHorario, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     } else {  //hay fecha de finalizar
                         try {
@@ -338,6 +335,8 @@ public class MenuPrincipal extends AppCompatActivity {
                 }
                 if (correcto) {
                     añadirEvento();
+                }else {
+                    Toast.makeText(MenuPrincipal.this, R.string.incorrecto, Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -464,47 +463,26 @@ public class MenuPrincipal extends AppCompatActivity {
 
     private void añadirEvento() {
         //inserta el evento con los datos metidos en la base de datos
-        String url = "http://192.168.1.135/developeru/añadir_evento.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (response != null && response.length() > 0) {
-                    if (response.equalsIgnoreCase("evento añadido")) {
-                        crearNotificacion(); //se notifica en el móvil
-                    } else {
-                        Toast.makeText(MenuPrincipal.this, "Algún dato incorrecto", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(MenuPrincipal.this, "No parametrs", Toast.LENGTH_LONG).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //TODO: CAMBIAR
-                Toast.makeText(MenuPrincipal.this, error.toString(), Toast.LENGTH_LONG).show();
-                Log.d("error", error.toString());
-            }
-        }) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //pasar los parametros al php
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("title", tit);
-                parametros.put("dateS", fechaI);
-                parametros.put("dateF", fechaF);
-                parametros.put("timeS", horI);
-                parametros.put("timeF", horF);
-                parametros.put("place", lug);
-                parametros.put("notes", notas);
-                parametros.put(" color", color);
-                parametros.put("user_name", str_name);
-                return parametros;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        //$query="INSERT INTO Evento (titulo, fechaI, fechaF, horarioI, horarioF, lugar, notas, color, nombreP)
+        //VALUES ('$title','$dateS','$dateF','$timeS','$timeF','$place','$notes','$color','$user_name')";
+
+        //base de datos
+        miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
+        SQLiteDatabase db= GestorDB.getWritableDatabase();
+        ContentValues eventoNuevo = new ContentValues();
+        eventoNuevo.put("titulo", tit);
+        eventoNuevo.put("fechaI", fechaI);
+        eventoNuevo.put("fechaF", fechaF);
+        eventoNuevo.put("horarioI", horI);
+        eventoNuevo.put("horarioF", horF);
+        eventoNuevo.put("lugar", lug);
+        eventoNuevo.put("notas", notas);
+        eventoNuevo.put("color", color);
+        eventoNuevo.put("nombreP", str_name);
+
+        db.insert("Evento", null, eventoNuevo);
+        db.close();
+        crearNotificacion(); //se notifica en el móvil
     }
 
     private void crearNotificacion() {
@@ -521,7 +499,7 @@ public class MenuPrincipal extends AppCompatActivity {
                 .setSmallIcon(R.drawable.baseline_calendar_month_24)
                 .setContentTitle(text)
                 .setContentText(tit+" "+getString(R.string.notTit))
-                .setColor(Integer.parseInt(color))
+                .setColor(parseInt(color))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
@@ -581,41 +559,6 @@ public class MenuPrincipal extends AppCompatActivity {
         sp2.setAdapter(adapter);
     }
 
-    @Override
-    protected void onStart() {
-        // reiniciar
-        super.onStart();
-        //Toast.makeText(this, "OnStart", Toast.LENGTH_SHORT).show();
-        // La actividad está a punto de hacerse visible.
-    }
-    @Override
-    protected void onResume() {
-        // hacer visible
-        super.onResume();
-        //Toast.makeText(this, "OnResume", Toast.LENGTH_SHORT).show();
-        // La actividad se ha vuelto visible (ahora se "reanuda").
-    }
-    @Override
-    protected void onPause() {
-        // Pausar la actividad: poner la app en 2 plano
-        super.onPause();
-        //Toast.makeText(this, "OnPause", Toast.LENGTH_SHORT).show();
-        // Enfocarse en otra actividad  (esta actividad est� a punto de ser "detenida").
-    }
-    @Override
-    protected void onStop() {
-        //Oculta la actividad: 2 plano
-        super.onStop();
-        //Toast.makeText(this, "OnStop", Toast.LENGTH_SHORT).show();
-        // La actividad ya no es visible (ahora est� "detenida")
-    }
-    @Override
-    protected void onDestroy() {
-        // cerrar la app:  no se puede recuoerar
-        super.onDestroy();
-       // Toast.makeText(this, "OnDestroy", Toast.LENGTH_SHORT).show();
-        // La actividad est� a punto de ser destruida.
-    }
 }
 
    /* private void archJson(){

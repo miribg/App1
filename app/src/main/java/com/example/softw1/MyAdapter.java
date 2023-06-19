@@ -64,7 +64,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList name,date, time, place, id, color;
     private String notas;
     private boolean delete;
-    private SQLiteDatabase db;
+
     public MyAdapter(Context context, ArrayList name, ArrayList date, ArrayList time, ArrayList place, ArrayList id,
                      ArrayList color,  boolean delete) {
         this.context = context;
@@ -77,6 +77,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
       //  modificar=click;
         this.delete=delete;
      //   importante=impor;
+
     }
 
     @NonNull
@@ -201,11 +202,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private void obtenerArchivo(View vi, int pos, boolean enseñar){
         //obtener las notas desdes la base de datos
         //$query="SELECT notas FROM Evento WHERE id=$id";
+
+        //base de datos
+        miBD GestorDB= new miBD(context, "UlertuzBD", null,1 );
+        SQLiteDatabase db= GestorDB.getWritableDatabase();
         String[] campos = new String[]{"notas"};
         String[] argumentos = new String[]{id.get(pos).toString()};
         Cursor cu = db.query("Evento", campos, "id = ?", argumentos, null, null, null);
         while (cu.moveToNext()) {
-            String notas= cu.getString(0);
+            notas= cu.getString(0);
             if (notas.isEmpty()){
                 notas="----------------"; //si esta vacio
             }
@@ -216,34 +221,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             }
         }
         cu.close();
+        db.close();
     }
 
     private void deleteDb (View vi, int pos){
         //borrar de la base de datos el evento seleccionado
-
-        String url = "http://192.168.1.135/developeru/eliminar_evento.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-               /* if (response != null && response.length()>0) {
-                    if (response.equalsIgnoreCase("borrado")) {
-                        Toast.makeText(context, "borrado", Toast.LENGTH_SHORT).show();
-                    }
-                }*/
-            }
-        }, null
-        ) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //pasar parametros a la db
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("id", (String) id.get(pos));
-                return parametros;
-            }
-        };
-        RequestQueue requestQueue= Volley.newRequestQueue(vi.getContext());
-        requestQueue.add(stringRequest);
+        // $query="DELETE FROM Evento WHERE id=$id";
+        //base de datos
+        miBD GestorDB= new miBD(context, "UlertuzBD", null,1 );
+        SQLiteDatabase db= GestorDB.getWritableDatabase();
+        String[] argumentos = new String[]{id.get(pos).toString()};
+        db.delete("Evento","id=?",argumentos);
+        db.close();
     }
 
 
@@ -254,7 +243,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         //TODO linearlayout
         private TextView name, place, date, time;
 
-        private MyAdapter adapter;
+       // private MyAdapter adapter;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

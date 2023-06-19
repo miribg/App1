@@ -35,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
     private EditText et1, et2;
     private TextView btn_reg;
     private Button btn_iniciar;
@@ -60,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         //base de datos
         miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
         bd= GestorDB.getWritableDatabase();
-        bd.close();
-        this.deleteDatabase("UlertuzBD");
+        //bd.close();
+        //this.deleteDatabase("UlertuzBD");
 
         //opciones de idiomas
         spinner=(Spinner)findViewById(R.id.spinnerId1);

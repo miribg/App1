@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,16 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ListaEventos extends AppCompatActivity {
-    String str_name;
-
-    Button btn_ret;
-
-    boolean delete;
-
-    RecyclerView recycleView;
-    ArrayList<String> name, date, time, lug, id, color;
-
-    MyAdapter adapter;
+    private String str_name;
+    private Button btn_ret;
+    private boolean delete;
+    private RecyclerView recycleView;
+    private ArrayList<String> name, date, time, lug, id, color;
+    private MyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,94 +71,41 @@ public class ListaEventos extends AppCompatActivity {
 
    private void obtenerEventos(){
         //obtener todos los eventos de la persona usuaria que ha echo login
-        String url = "http://192.168.1.135/developeru/eventos.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {;
-                if (response != null && response.length()>0) {
-                    if (response.equalsIgnoreCase("incorrecto")) {
-                    }else{
-                        String [] eventos= response.split("\\|"); //separar el string por eventos
-                        for (int i=0;i< eventos.length;i++) {
-                            String[] datos= eventos[i].split(","); //obtener todos los valores de cada evento
-                            //añadir datos a los arrayList
-                            id.add(datos[0]);
-                            name.add(datos[1]);
-                            if (datos[3].equals("0000-00-00")) {    //fechaF VACIO
-                                date.add(datos[2]);
-                            }else {
-                                date.add(datos[2] + " - " + datos[3]);
-                            }
-                            int x=4;
-                            while (x<6) {
-                                if (datos[x].equals("00:00:00") || datos[x].equals("0") || datos[x].equals("")){
-                                    datos[x]=" ";
-                                }else{
-                                    String[] hora=datos[x].split(":");
-                                    datos[x]= hora[0]+":"+hora[1];
-                                }
-                                x++;
-                            }
-                            time.add(datos[4]+"-"+datos[5]);
-                            lug.add(datos[6]);
-                            color.add(datos[7]);
-                        }
-                        adapter= new MyAdapter(ListaEventos.this,name,date,time,lug,id, color, delete);//crear adapter
-                        recycleView.setAdapter(adapter); //añadir al recycleView
-                        recycleView.setLayoutManager(new LinearLayoutManager(ListaEventos.this));
-                    }
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //TODO: CAMBIAR
-                Toast.makeText(ListaEventos.this, error.toString(), Toast.LENGTH_LONG).show();
-                Log.d("error",error.toString());
-            }
-        }
-        ) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //pasar parametros a la base de datos
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("user_name", str_name);
-                return parametros;
-            }
-        };
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+       //base de datos
+       miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
+       SQLiteDatabase db= GestorDB.getWritableDatabase();
+       //$query="SELECT id, titulo, fechaI, fechaF, horarioI, horarioF, lugar, color
+       // FROM Evento WHERE nombreP='$user_name'";
+       String[] campos = new String[]{"id", "titulo", "fechaI", "fechaF", "horarioI", "horarioF", "lugar", "color"};
+       String[] argumentos = new String[]{str_name};
+       Cursor cu = db.query("Evento", campos, "nombreP = ?", argumentos, null, null, null);
+       while(cu.moveToNext()) {
+           id.add(String.valueOf(cu.getInt(0)));
+           name.add(cu.getString(1));
+           if (cu.getString(3).equals("0000-00-00")) {    //fechaF VACIO
+               date.add(cu.getString(2));
+           }else {
+               date.add(cu.getString(2) + " - " + cu.getString(3));
+           }int x=0;
+           String[] horarios= new String[]{cu.getString(4),cu.getString(5)};
+           while (x<2) {
+               if (horarios[x].equals("00:00:00") || horarios[x].equals("0") || horarios[x].equals("")){
+                   horarios[x]=" ";
+               }else{
+                   String[] hora=horarios[x].split(":");
+                   horarios[x]= hora[0]+":"+hora[1];
+               }
+               x++;
+           }
+           time.add(horarios[0]+"-"+horarios[1]);
+           lug.add(cu.getString(6));
+           color.add(cu.getString(7));
+       }
+       cu.close();
+       db.close();
+       adapter= new MyAdapter(ListaEventos.this,name,date,time,lug,id, color, delete);//crear adapter
+       recycleView.setAdapter(adapter); //añadir al recycleView
+       recycleView.setLayoutManager(new LinearLayoutManager(ListaEventos.this));
     }
 
-
-    protected void onStart() {
-        // reiniciar
-        super.onStart();
-        //Toast.makeText(this, "OnStart", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onResume() {
-        // hacer visible
-        super.onResume();
-        //Toast.makeText(this, "OnResume", Toast.LENGTH_SHORT).show();.
-    }
-    @Override
-    protected void onPause() {
-        // Pausar la actividad: poner la app en 2 plano
-        super.onPause();
-        //Toast.makeText(this, "OnPause", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onStop() {
-        //Oculta la actividad: 2 plano
-        super.onStop();
-        //Toast.makeText(this, "OnStop", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onDestroy() {
-        // cerrar la app:  no se puede recuoerar
-        super.onDestroy();
-        // Toast.makeText(this, "OnDestroy", Toast.LENGTH_SHORT).show();
-    }
 }

@@ -3,8 +3,10 @@ package com.example.softw1;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,21 +36,15 @@ import java.util.concurrent.ThreadFactory;
 
 public class EscogerColor extends AppCompatActivity {
 
-    Fragment  frCol; //mediante este atributo se puede ver el fragment pintado
-    FragmentTransaction transaction; //para gestionar el cambio de color del fragment
-
-    Button btn_vol, btn_guar;
-
-    Spinner sp; //opciones de colores
-
-    String color, colorEsc, str_name;
-
+    private Fragment  frCol; //mediante este atributo se puede ver el fragment pintado
+    private FragmentTransaction transaction; //para gestionar el cambio de color del fragment
+    private Button btn_vol, btn_guar;
+    private Spinner sp; //opciones de colores
+    private String color, colorEsc, str_name;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eleccion_color);
-
-
 
         //obtener valores del MenuPrincipal
         str_name=getIntent().getExtras().getString("user_name");
@@ -70,7 +66,6 @@ public class EscogerColor extends AppCompatActivity {
                   if ( getResources().getConfiguration().orientation==ORIENTATION_LANDSCAPE){
                         obtenerColor(i);
                   }
-
                 }
                 transaction=getSupportFragmentManager().beginTransaction();
                 frCol=new ColorFragment(Integer.parseInt(colorEsc));
@@ -122,60 +117,18 @@ public class EscogerColor extends AppCompatActivity {
 
     private void updateColor(){
         //actualizar en la base datos el color
-        String url = "http://192.168.1.135/developeru/updateCol.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-               /* if (response != null && response.length()>0) {
-                    if (response.equalsIgnoreCase("color actualizado")) {
-                        Toast.makeText(EscogerColor.this,"Actualizado", Toast.LENGTH_SHORT).show();
-                    }
-                }*/
-            }
-        }, null) {
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                //pasar a la base de datos los parametros que necesita para realizar la consulta
-                Map<String, String> parametros = new HashMap<String, String>();
-                parametros.put("user_name", str_name);
-                parametros.put("color",color);
-                return parametros;
-            }
-        };
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        //$query="UPDATE Usuario SET color= $color WHERE user_name='$user_name'";
+
+        //base de datos
+        miBD GestorDB= new miBD(this, "UlertuzBD", null,1 );
+        SQLiteDatabase db= GestorDB.getWritableDatabase();
+        ContentValues modificacion= new ContentValues();
+        modificacion.put("color",color);
+        String[] argumentos= new String[]{str_name};
+        db.update("Usuario",modificacion,"user_name=?",argumentos);
+        db.close();
     }
 
-    protected void onStart() {
-        // reiniciar
-        super.onStart();
-        //Toast.makeText(this, "OnStart", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onResume() {
-        // hacer visible
-        super.onResume();
-        //Toast.makeText(this, "OnResume", Toast.LENGTH_SHORT).show();.
-    }
-    @Override
-    protected void onPause() {
-        // Pausar la actividad: poner la app en 2 plano
-        super.onPause();
-        //Toast.makeText(this, "OnPause", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onStop() {
-        //Oculta la actividad: 2 plano
-        super.onStop();
-        //Toast.makeText(this, "OnStop", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    protected void onDestroy() {
-        // cerrar la app:  no se puede recuoerar
-        super.onDestroy();
-        // Toast.makeText(this, "OnDestroy", Toast.LENGTH_SHORT).show();
-    }
 
 
 }

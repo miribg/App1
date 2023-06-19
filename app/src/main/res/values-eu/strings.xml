@@ -25,6 +25,8 @@
     <string name="btn_volver"> Itzuli </string>
     <string name="escogerC">Kolore bat aukeratu</string>
     <string name="vacio">Aldagairen bat hutsik</string>
+    <string name="incorrecto">Aldagairen bat ez da zuzena</string>
+    <string name="vacHorario">Hasteko ordua jarri behar da.</string>
     <string name="vacioReg">Bete ezazu erabiltzaile izena eta pasahitza</string>
     <string name="formatoCorreo">Email formatua ez da zuzena</string>
     <string name="errorSign">Erabiltzaile izena edota pasahitza ez da zuzena</string>

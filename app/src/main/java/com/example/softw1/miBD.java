@@ -34,7 +34,7 @@ public class miBD extends SQLiteOpenHelper {
                         " 'fechaI' DATE NOT NULL," +
                         " 'fechaF' DATE," +
                         " 'horarioI' TIME NOT NULL," +
-                        " 'horarioF' TIME NOT NULL," +
+                        " 'horarioF' TIME," +
                         " 'lugar' TEXT," +
                         " 'notas' TEXT," +
                         " 'color' INTEGER," +
