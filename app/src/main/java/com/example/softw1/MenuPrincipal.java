@@ -82,10 +82,9 @@ import java.util.Map;
 
 public class MenuPrincipal extends AppCompatActivity {
 
-    // OneCalendarView calV;
     private CalendarView calV;
     private FloatingActionButton fab1, fab2;
-    private Spinner sp1, sp2, sp3;
+    private Spinner  sp2, sp3;
     private Button btn;
     private String str_name, fechaI, fechaF, horI, horF, lug, tit, notas, color, colorB;
     private int seleccion;
@@ -104,21 +103,6 @@ public class MenuPrincipal extends AppCompatActivity {
         calV = (CalendarView) findViewById(R.id.calendarView);
         calV.setFirstDayOfWeek(2); //2=Monday
 
-        // Opción de cambiar idioma
-        sp1 = (Spinner) findViewById(R.id.spinnerId2);
-        sp1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {   //si ha escogido un idioma
-                    String idioma = adapterView.getItemAtPosition(i).toString();  //obtiene el valor escogido
-                    cambiarIdioma(idioma);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
-
         //Escoger operación que se quiere realizar
         sp2 = (Spinner) findViewById(R.id.spinnerOp);
         sp2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -131,9 +115,9 @@ public class MenuPrincipal extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        obtenerColor();
         //clickar botón aceptar
         btn = (Button) findViewById(R.id.okbutton);
+        obtenerColor();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,8 +126,6 @@ public class MenuPrincipal extends AppCompatActivity {
                 intent.putExtra("color",colorB);
                 switch (seleccion) {
                     case 1: //ver eventos
-                        // intent= new Intent(getApplicationContext(), ListaEventos.class);
-                     //   intent.putExtra("click", false);
                         intent.putExtra("delete", "false");
                         startActivity(intent);
                         break;
@@ -151,16 +133,9 @@ public class MenuPrincipal extends AppCompatActivity {
                         añadirEventoAlert();
                         break;
                     case 3: //eliminar eventos
-                        //  intent= new Intent(getApplicationContext(), ListaEventos.class);
-                       // intent.putExtra("click", true);
                         intent.putExtra("delete", "true");
                         startActivity(intent);
                         break;
-                  /*  case 4: //Modificar eventos
-                        intent.putExtra("click", true);
-                        intent.putExtra("delete", false);
-                        startActivity(intent);
-                        break;*/
                     default: //nada
                         break;
                 }
@@ -220,12 +195,12 @@ public class MenuPrincipal extends AppCompatActivity {
         Cursor cu = bd.query("Usuario", campos, "user_name = ?", argumentos, null, null, null);
         cu.moveToFirst();
         colorB =cu.getString(0);
-        if (colorB.isEmpty()){ //en el caso de no haber escogido ninguno
+        cu.close();
+        bd.close();
+        if (colorB==null){ //en el caso de no haber escogido ninguno
             colorB=obtenerColor(0, true);
         }
         btn.setBackgroundColor(parseInt(colorB));
-        cu.close();
-        bd.close();
     }
 
     private void añadirEventoAlert() {
@@ -537,46 +512,7 @@ public class MenuPrincipal extends AppCompatActivity {
             }
         }
     }
-    private void cambiarIdioma(String idioma){
-        Locale nuevaloc = new Locale(idioma);
-        Locale.setDefault(nuevaloc);
-        Resources resources= getBaseContext().getResources();
-        Configuration configuration =resources.getConfiguration();
-        configuration.setLocale(nuevaloc);
-        configuration.setLayoutDirection(nuevaloc);
-        Context context = getBaseContext().createConfigurationContext(configuration);
-        resources.updateConfiguration(configuration, context.getResources().getDisplayMetrics());
-        actualizar();
-    }
-
-    private void actualizar(){
-        //actualiza los datos al idioma seleccionado
-        btn.setText(R.string.btn_acep);
-        ArrayAdapter<CharSequence> adapter= ArrayAdapter.createFromResource(this, R.array.idiomas ,
-                android.R.layout.simple_spinner_item);
-        sp1.setAdapter(adapter);
-        adapter=ArrayAdapter.createFromResource(this, R.array.operaciones ,android.R.layout.simple_spinner_item);
-        sp2.setAdapter(adapter);
-    }
 
 }
 
-   /* private void archJson(){
-            String path = "/app/json/companies.json";
-            arch = new JSONObject();
-            try {
-                /*arch.put("Titulo", tit);
-                arch.put("Fecha de inicio",fechaI);
-                arch.put("Horario",horI);
-                arch.put("Notas", notas);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-                out.write(arch.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-    }*/
 

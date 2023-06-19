@@ -20,8 +20,11 @@
     <string name="btn_canc"> Cancelar </string>
     <string name="tit_reg"> REGISTRO </string>
     <string name="tit_an">Añadir evento</string>
+    <string name="tit_idioma1">¿Cual es tu idioma preferido?</string>
+    <string name="tit_idioma2">Elige un idioma:</string>
+    <string name="tit_color1">¿Cual es tu color preferido?</string>
     <string name="tit_bor"> Evento borrado</string>
-    <string name="titulo">Eventos</string>
+    <string name="titulo">EVENTOS</string>
     <string name="btn_volver"> Volver </string>
     <string name="escogerC">Escoge un color</string>
     <string name="vacio">Algún parametro vacio</string>
@@ -29,6 +32,7 @@
     <string name="vacHorario">Debes poner horario de iniciar.</string>
     <string name="vacioReg">Rellena nombre de usuario y contraseña</string>
     <string name="formatoCorreo">Formato de correo incorrecto</string>
+    <string name="formatoTel">Formato de telefono incorrecto: debe tener 9 digitos</string>
     <string name="errorSign">Nombre de usuario o contraseña incorrecta</string>
     <string name="errorSignEn">Incorrecto</string>
     <string name="errorRepe">Ya existe un usuario con ese nombre. Inserta otro.</string>
@@ -45,6 +49,10 @@
     <string name="Preg">¿Quieres mandar en un correo las notas?</string>
     <string-array name="idiomas">
         <item> Idioma </item>
+        <item> eu </item>
+        <item> es </item>
+    </string-array>
+    <string-array name="idiomasPref">
         <item> eu </item>
         <item> es </item>
     </string-array>

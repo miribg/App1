@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -142,10 +141,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     }
                 });
         AlertDialog alert= al.create();
-    //    alert.setMessage(text);
         alert.show();
-
-        //builder.setMessage(R.string.dialog_start_game)
     }
 
     private void crearArchText(String text, int pos){
@@ -172,7 +168,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             BufferedReader bf= new BufferedReader(new InputStreamReader(
                    context.openFileInput("text.txt") ));
             String texto=bf.readLine();
-            Toast.makeText(context,"te"+texto,Toast.LENGTH_LONG).show();
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:"));
             intent.putExtra(Intent.EXTRA_TEXT, texto);
@@ -242,8 +237,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private CardView card;
         //TODO linearlayout
         private TextView name, place, date, time;
-
-       // private MyAdapter adapter;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

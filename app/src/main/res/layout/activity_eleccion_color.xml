@@ -16,11 +16,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+       <FrameLayout
+           android:layout_width="match_parent"
+           android:layout_height="100dp"
+           android:id="@+id/contenedor">
+       </FrameLayout>
         <TextView
             android:id="@+id/textEscCol"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/escogerC"
+            android:text="@string/tit_color1"
             android:textSize="20sp" />
 
         <Spinner
@@ -31,7 +36,6 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textSize="20sp" />
-
         <FrameLayout
             android:id="@+id/fragmentC"
             android:layout_width="match_parent"

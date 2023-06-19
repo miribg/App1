@@ -20,8 +20,11 @@
     <string name="btn_canc"> Ezeztatu </string>
     <string name="tit_reg"> IZENA EMAN</string>
     <string name="tit_an">Ekintza gehitu</string>
+    <string name="tit_idioma1">Zein da hizkuntzarik gustukoena?</string>
+    <string name="tit_idioma2">Hizkuntza aukeratu:</string>
+    <string name="tit_color1">Zein da kolorerik gustukoena?</string>
     <string name="tit_bor"> Ekintza ezabatuta</string>
-    <string name="titulo">Ekintzak</string>
+    <string name="titulo">EKINTZAK</string>
     <string name="btn_volver"> Itzuli </string>
     <string name="escogerC">Kolore bat aukeratu</string>
     <string name="vacio">Aldagairen bat hutsik</string>
@@ -29,6 +32,7 @@
     <string name="vacHorario">Hasteko ordua jarri behar da.</string>
     <string name="vacioReg">Bete ezazu erabiltzaile izena eta pasahitza</string>
     <string name="formatoCorreo">Email formatua ez da zuzena</string>
+    <string name="formatoTel">Telefono formatua ez da zuzena: 9 digitu izan behar ditu</string>
     <string name="errorSign">Erabiltzaile izena edota pasahitza ez da zuzena</string>
     <string name="errorSignEn">Okerra</string>
     <string name="errorRepe"> Badago beste erabiltzaile bat izen horrekin. Sartu beste bat.</string>
@@ -45,6 +49,10 @@
     <string name="Preg">Nahi duzu mezu elektroniko baten bidali oharrak?</string>
     <string-array name="idiomas">
         <item> Hizkuntza </item>
+        <item> eu </item>
+        <item> es </item>
+    </string-array>
+    <string-array name="idiomasPref">
         <item> eu </item>
         <item> es </item>
     </string-array>

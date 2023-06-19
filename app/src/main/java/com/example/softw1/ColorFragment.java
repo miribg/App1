@@ -8,9 +8,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 public class ColorFragment extends Fragment {
-
-    int color;
-
+    private int color;
     public ColorFragment(){}
     public ColorFragment(int pColor){
         color=pColor;

@@ -8,20 +8,25 @@
 
     <LinearLayout
         android:id="@+id/linearLayout6"
-        android:layout_width="262dp"
-        android:layout_height="323dp"
-        android:layout_marginTop="84dp"
+        android:layout_width="281dp"
+        android:layout_height="315dp"
+        android:layout_marginTop="32dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <FrameLayout
+            android:id="@+id/contenedor"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"></FrameLayout>
+
         <TextView
             android:id="@+id/textEscCol"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/escogerC"
+            android:text="@string/tit_color1"
             android:textSize="20sp" />
 
         <Spinner

@@ -26,19 +26,10 @@
         android:id="@+id/linearLayout4"
         android:layout_width="362dp"
         android:layout_height="310dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="64dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <Spinner
-            android:id="@+id/spinnerId2"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_gravity="right"
-            android:entries="@array/idiomas"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
 
         <CalendarView
             android:id="@+id/calendarView"

@@ -25,20 +25,12 @@
         android:id="@+id/linearLayout4"
         android:layout_width="376dp"
         android:layout_height="436dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="44dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.457"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <Spinner
-            android:id="@+id/spinnerId2"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_gravity="right"
-            android:entries="@array/idiomas"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
 
         <CalendarView
             android:id="@+id/calendarView"

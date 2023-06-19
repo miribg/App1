@@ -5,8 +5,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -35,6 +37,9 @@ public class Registro extends AppCompatActivity  {
     private Button btn;
     private String str_name, str_uName, str_surname, str_password, str_email, str_phone;
     private SQLiteDatabase db;
+
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Unión entre vista y controlador
@@ -81,11 +86,16 @@ public class Registro extends AppCompatActivity  {
 
         if (cant == 0) {
             str_email=et5.getText().toString().trim();
-            if (isEmailValid(str_email)){
-                registrar(); //si no esta, se registra el usuario
+            str_phone=et6.getText().toString().trim();
+            if (isEmailValid(str_email) || str_email.isEmpty()){
+                if(str_phone.length()==9 || str_phone.length()==0){
+                    registrar();     //si no esta, se registra el usuario
+                }else{
+                   Toast.makeText(Registro.this,R.string.formatoTel,Toast.LENGTH_SHORT).show();//el telefono debe tener 9 caracteres o no ponerlo
+                }
             }else{
                 Toast.makeText(Registro.this,R.string.formatoCorreo, Toast.LENGTH_SHORT).show();
-            } //TODO telf. 9 carac o vacio
+            }
         } else {
             errorAlert();
             et1.setText("", TextView.BufferType.EDITABLE);  //vaciar el nombre de usuario, para que puedan volver a meterlo
@@ -102,9 +112,6 @@ public class Registro extends AppCompatActivity  {
         //obtener valores
         str_name = et2.getText().toString().trim();
         str_surname=et3.getText().toString().trim();
-        str_phone=et6.getText().toString().trim();
-
-        // TODO Preferncia idioma
 
         //$query="INSERT INTO Usuario ('user_name','name','password', 'email','phone')
         // VALUES ('$user_name','$name','$surname','$password','$email','$phone')";
@@ -117,6 +124,9 @@ public class Registro extends AppCompatActivity  {
         usuarioNuevo.put("name", str_name);
         db.insert("Usuario", null, usuarioNuevo);
         db.close();
+
+        Intent intent1= new Intent(getApplicationContext(),PreferenceFragment.class);
+        startActivity(intent1);
 
         //Dirige al inicio de sesión
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

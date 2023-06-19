@@ -45,7 +45,6 @@ public class ListaEventos extends AppCompatActivity {
 
         //obtener valores del Menu Principal
         str_name= getIntent().getExtras().getString("name");
-       //click= Boolean.parseBoolean(getIntent().getExtras().getString("click"));
         delete= Boolean.parseBoolean(getIntent().getExtras().getString("delete"));
         //boton volver
         btn_ret=(Button) findViewById(R.id.buttonVol);
